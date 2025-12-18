@@ -35,7 +35,7 @@
 
 \begin{document}
 
-\title{Multi-Port Memory with Bi-directional Ports for FPGAs Using XOR and LVT Methods}
+\title{Multi-Port Memory with Bidirectional Ports for FPGAs Using XOR and LVT Methods}
 
 %%
 %% The "author" command and its associated commands are used to define
@@ -56,7 +56,7 @@ This implementation creates these additional ports by encoding and decoding the 
 Using XOR operators to accomplish this encoding/decoding has advantages over other approaches because the XOR operator is a simple and efficient operation.
 The result is a high-throughput multi-ported memory that is particularly well-suited for implementation on FPGAs.
 This paper also presents an efficient architecture for creating a live value table (LVT) memory using an XOR-based scheme by utilizing its bidirectional capabilities.
-We use an XOR memory with full ports to implement a bi-directional live value table design.
+We use an XOR memory with full ports to implement a bidirectional live value table design.
 We evaluate the architecture's performance and resource utilization, and show that the XOR-based bidirectional live value table is a compelling alternative for applications requiring high-performance, flexible memory access.
 \end{abstract}
 
@@ -401,7 +401,7 @@ This paper explores how to overcome the limitation that FPGA memories have a lim
 ports. Specifically, we propose a method to create memories with more than 2 ports.
 
 The major FPGA vendors (AMD\cite{amd20}, Intel\cite{intel24}, Lattice\cite{lattice21}, Micro\-chip\cite{microchip_polarfire_fabric}, and Achronix\cite{achronix_ds015}) implement distributed memory (small memories) and block memory (large memories)
-differently. However they all share some characteristics. All vendors support distributed memory configurations with 1 full or write port and between 1 to 3 read ports. All vendors support block memory with 2 full ports. AMD has a limited offering of multiport memories, but otherwise none of the vendors support memories with more than 2 full ports. Although this limitation is problematic for designs requiring multiple ports (and particularly write or full ports), we show that these resources can be configured to achieve high throughput full port memories.
+differently. However they all share some characteristics. All vendors support distributed memory configurations with 1 full or write port and between 1 to 3 read ports. All vendors support block memory with 2 full ports. AMD has a limited offering of multi-port memories, but otherwise none of the vendors support memories with more than 2 full ports. Although this limitation is problematic for designs requiring multiple ports (and particularly write or full ports), we show that these resources can be configured to achieve high throughput full port memories.
 
 \section{Source Code}
 We provide all of the source code used in implementation and testing our design at
@@ -435,7 +435,7 @@ Meaning XOR is the inverse operator of itself. Combined with the commutative and
 b_0 \oplus \dots \oplus b_n \oplus (a \oplus b_0 \dots \oplus b_n) = a
 \end{equation}
 
-This implementation creates these additional ports by encoding and decoding the entries with XOR logic. The incoming (written) data is encoded with the data corresponding to the other ports, and the outgoing (read) data is decoded by XORing all the entries in the memory banks. Using XOR operators to accomplish this encoding/decoding has advantages over other approaches, because the XOR operator is a simple and efficient operation.
+This implementation creates these additional ports by encoding and decoding the entries with XOR logic. The incoming (written) data is encoded with the data corresponding to the other ports, and the outgoing (read) data is decoded by XORing all the entries in the memory banks. Using XOR operators to accomplish this encoding/decoding has advantages over other approaches, because the XOR operator is simply and efficiently implemented with LUTs.
 
 We use XOR logic to add bidirectional
 ports and analyze the performance of distributed memory and block memory
@@ -617,7 +617,7 @@ Table \ref{tab:syn_xor_bram_ports} shows results from an implementation using bl
   \draw[<->] (2.05,-1.2) -- (2.05,-1.6) node[right,midway]{2};
   \draw[<->] (3.05,-1.2) -- (3.05,-1.6) node[right,midway]{3};
   \end{tikzpicture}
- \caption{Multi-port memory created with bi-directional dual-port RAMs. Note, a live value table is needed to determine which RAM has the most recent value.}
+ \caption{Multi-port memory created with bidirectional dual-port RAMs. Note, a live value table is needed to determine which RAM has the most recent value.}
   \label{fig:lvt0}
   \Description{An illustration.}
 \end{figure}
@@ -665,9 +665,9 @@ Table \ref{tab:syn_xor_bram_ports} shows results from an implementation using bl
 
 XOR memories can be used by themselves, but combining a live value table (LVT) with XOR may be more efficient. We present a LVT memory that utilizes XOR memory.
 
-Previous work used distributed memory \cite{abdelhadi16}. However, that work did not use bidirectional XOR ports in their implementation. In an alternate implementations\cite{laforest12}\cite{choi12}, the live value table was implemented with registers.
+In an alternate implementations\cite{laforest12}\cite{choi12}, the live value table was implemented with registers. Previous work has used distributed memory \cite{abdelhadi16}. However, that work did not use a bidirectional XOR memory in their implementation.
 
-We create a LVT memory using the technique described in \cite{choi12}. This LVT memory is composed of bi-directional dual-port RAMs. Each port of the LVT memory shares a RAM with another port of the LVT memory. This results in $F(F-1)/2$ RAMs being needed, where $F$ is the number of bi-directional (full) ports. This is less than the $F^2$ RAMs needed in the XOR implementation. Figure \ref{fig:lvt0} illustrates the implementation for 4 ports.
+We create a LVT memory using the technique described in \cite{choi12}. This LVT memory is composed of bidirectional dual-port RAMs. Each port of the LVT memory shares a RAM with another port of the LVT memory. This results in $F(F-1)/2$ RAMs being needed, where $F$ is the number of bidirectional (full) ports. This is less than the $F^2$ RAMs needed in the XOR implementation. Figure \ref{fig:lvt0} illustrates the implementation for 4 ports.
 
 The memory gets its name because it uses multi-port memory to track the most recent stored value (i.e., a live value table). The point of a multi-port memory that requires a multi-port memory is that wide (e.g., 32 bit data) can be stored more efficiently this way, since the live value table is just storing the port numbers. (e.g., In Figure \ref{fig:lvt0} the live value table memory has a width of 2 since there are 4 ports.)
 
@@ -759,7 +759,7 @@ Without write delay an 8 port memory runs at 455mhz (63\% of max frequency of th
 \section{Conclusion}
 A combination of XOR and LVT techniques can efficiently create FPGA memories with multiple ports, but at the cost of using more memory space. For high bandwidth low-latency applications, committing these RAMs may be the best option when creating a multi-port memory.
 
-To summarize, this paper presents two contributions. First, we generalize XOR memory to support bi-directional ports. Second, we use bidirectional XOR memory to create a LVT memory.
+To summarize, this paper presents two contributions. First, we generalize XOR memory to support bidirectional ports. Second, we use bidirectional XOR memory to create a LVT memory.
 
 %% The next two lines define the bibliography style to be used, and
 %% the bibliography file.
