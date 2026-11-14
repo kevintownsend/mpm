@@ -1,3 +1,0 @@
-Time resolution is 1 ps
-Passed
-$finish called at time : 155 ns : File "/home/kevin/workspace/bidirectional-xor-memory/lvt_memory_tb.sv" Line 48
