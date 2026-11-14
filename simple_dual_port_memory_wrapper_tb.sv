@@ -12,13 +12,13 @@ module simple_dual_port_memory_wrapper_tb;
   simple_dual_port_memory_wrapper #(
     .WIDTH(WIDTH),
     .DEPTH(DEPTH)
-  )sdp(
-    clk,
-    addr_d,
-    d,
-    en,
-    addr_q,
-    q
+  ) sdp (
+    .clk(clk),
+    .addr_d(addr_d),
+    .d(d),
+    .en(en),
+    .addr_q(addr_q),
+    .q(q)
   );
 
   initial begin

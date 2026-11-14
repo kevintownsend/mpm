@@ -11,7 +11,17 @@ module xor_bram_memory_pipelined_tb;
 
   logic [WIDTH-1:0] golden[DEPTH-1:0];
 
-  xor_bram_memory_pipelined #(WIDTH, DEPTH, PORTS) dut(clk, addr, d, en, q);
+  xor_bram_memory_pipelined #(
+    .WIDTH(WIDTH),
+    .DEPTH(DEPTH),
+    .PORTS(PORTS)
+  ) dut (
+    .clk(clk),
+    .addr(addr),
+    .d(d),
+    .en(en),
+    .q(q)
+  );
 
   initial begin
     clk = 1;

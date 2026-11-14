@@ -11,12 +11,16 @@ module lvt_memory_pipelined_tb;
 
   logic [WIDTH-1:0] golden[DEPTH-1:0];
 
-  lvt_memory_pipelined #(WIDTH, DEPTH, PORTS) dut(
-    clk,
-    addr,
-    en,
-    d,
-    q
+  lvt_memory_pipelined #(
+    .WIDTH(WIDTH),
+    .DEPTH(DEPTH),
+    .PORTS(PORTS)
+  ) dut (
+    .clk(clk),
+    .addr(addr),
+    .d(d),
+    .en(en),
+    .q(q)
   );
 
   initial begin
