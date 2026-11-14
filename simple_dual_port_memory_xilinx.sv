@@ -1,13 +1,15 @@
 module simple_dual_port_memory_xilinx #(
   parameter WIDTH = 8,
   parameter DEPTH = 256,
-  parameter WRITE_FIRST = 0)(
-  input clk,
-  input [$clog2(DEPTH)-1:0]addr_d,
-  input [WIDTH-1:0]d,
-  input en,
-  input [$clog2(DEPTH)-1:0]addr_q,
-  output logic [WIDTH-1:0]q);
+  parameter WRITE_FIRST = 0
+) (
+  input  logic                     clk,
+  input  logic [$clog2(DEPTH)-1:0] addr_d,
+  input  logic [WIDTH-1:0]         d,
+  input  logic                     en,
+  input  logic [$clog2(DEPTH)-1:0] addr_q,
+  output logic [WIDTH-1:0]         q
+);
 
 /* verilator lint_off PINCONNECTEMPTY */
 xpm_memory_sdpram #(
