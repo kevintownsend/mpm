@@ -19,8 +19,8 @@ genvar gi, gj;
 generate
   for(gi = 0; gi < PORTS; gi++) begin : y_genblock
     for(gj = 0; gj < PORTS; gj++) begin : x_genblock
-      if(gj < gi) begin
-        dual_port_memory #(WIDTH, DEPTH) ram (
+      if(gj < gi) begin : gen_ram
+        dual_port_memory #(WIDTH, DEPTH) dp_ram (
           clk,
           addr[gi],
           en[gi],
@@ -37,25 +37,28 @@ generate
 endgenerate
 
 // Intermediate output diagonal.
-integer i;
 /* verilator lint_off ALWCOMBORDER */
 always_comb begin
-  intermediate_output[0][0] = intermediate_output[1][0];
-  for(i = 1; i < PORTS; i++) begin
-    intermediate_output[i][i] = intermediate_output[i-1][i];
+  intermediate_output[0][0] = intermediate_output[0][1];
+  for (int i = 1; i < PORTS; i++) begin
+    intermediate_output[i][i] = intermediate_output[i][i-1];
   end
 end
 /* verilator lint_on ALWCOMBORDER */
 
 logic [$clog2(PORTS)-1:0]port_numbers[PORTS-1:0];
-integer j;
 initial begin
-  for(j=0; j < PORTS; j++) begin
+  for (int j = 0; j < PORTS; j++) begin
     port_numbers[j] = j[$clog2(PORTS)-1:0];
   end
 end
 
 logic [$clog2(PORTS)-1:0] lvt_output[PORTS-1:0];
+logic [$clog2(PORTS)-1:0] lvt_output_buffered[PORTS-1:0];
+
+always @(posedge clk) begin
+  lvt_output_buffered <= lvt_output;
+end
 
 xor_distributed_memory #($clog2(PORTS), DEPTH, PORTS) lvt(
   clk,
@@ -67,7 +70,7 @@ xor_distributed_memory #($clog2(PORTS), DEPTH, PORTS) lvt(
 
 always_comb begin
   for(int k = 0; k < PORTS; k++) begin
-    q[k] = intermediate_output[k][lvt_output[k]];
+    q[k] = intermediate_output[k][lvt_output_buffered[k]];
   end
 end
 

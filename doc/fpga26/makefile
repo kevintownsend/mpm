@@ -27,6 +27,8 @@ clean:
 	*.cfg *.glo *.idx *.toc \
 	*.ilg *.ind *.out *.lof \
 	*.lot *.bbl *.blg *.gls *.cut *.hd \
-	*.dvi *.ps *.thm *.tgz *.zip *.rpi paper.pdf
+	*.dvi *.ps *.thm *.tgz *.zip *.rpi paper.pdf \
+	poster.pdf
 
-
+poster: poster.tex
+	pdflatex poster.tex

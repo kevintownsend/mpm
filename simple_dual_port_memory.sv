@@ -1,7 +1,6 @@
 module simple_dual_port_memory #(
   parameter WIDTH = 8,
-  parameter DEPTH = 256,
-  parameter WRITE_FIRST = 0)(
+  parameter DEPTH = 256)(
   input clk,
   input [$clog2(DEPTH)-1:0]addr_d,
   input [WIDTH-1:0]d,
@@ -10,6 +9,12 @@ module simple_dual_port_memory #(
   output logic [WIDTH-1:0]q);
 
   reg [WIDTH-1:0]ram[DEPTH-1:0];
+
+  initial begin
+    for (int i = 0; i < DEPTH; i++) begin
+      ram[i] = '0;
+    end
+  end
 
   always @(posedge clk) begin
     if(en) begin

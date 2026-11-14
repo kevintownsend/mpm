@@ -30,19 +30,18 @@ module xor_bram_memory_pipelined #(
   end
   */
 
-  integer i, j;
   always_comb begin
-    for(i = 0; i < PORTS; i = i + 1) begin
+    for (int i = 0; i < PORTS; i = i + 1) begin
       partial_xor_input[i] = 0;
-      for(j = 0; j < PORTS; j = j + 1) begin
-        if (i!= j) begin
+      for (int j = 0; j < PORTS; j = j + 1) begin
+        if (i != j) begin
           partial_xor_input[i] = partial_xor_input[i] ^ ram_output[j][i];
         end
       end
     end
   end
   always @(posedge clk) begin
-    for(i = 0; i < PORTS; i = i + 1) begin
+    for (int i = 0; i < PORTS; i = i + 1) begin
       q[i] <= partial_xor_input[i] ^ ram_output[i][i];
     end
   end

@@ -8,8 +8,6 @@ module simple_dual_port_memory_wrapper #(
   input [$clog2(DEPTH)-1:0]addr_q,
   output logic [WIDTH-1:0]q);
 
-  reg [WIDTH-1:0]ram[DEPTH-1:0];
-
   logic [WIDTH-1:0] sdp_q;
   simple_dual_port_memory #(
     .WIDTH(WIDTH),
@@ -26,7 +24,7 @@ module simple_dual_port_memory_wrapper #(
   logic addr_eq;
   logic [WIDTH-1:0]d_buffered;
   always @(posedge clk) begin
-    addr_eq <= addr_d == addr_q;
+    addr_eq <= en && (addr_d == addr_q);
     d_buffered <= d;
   end
 

@@ -22,16 +22,12 @@ logic [PORTS*$clog2(DEPTH)-1:0]addr_unrolled;
 logic [PORTS*WIDTH-1:0]lvt_d_unrolled;
 //logic [PORTS*WIDTH-1:0]lvt_d_unrolled_buffered;
 logic [PORTS*WIDTH-1:0]lvt_q_unrolled;
-logic [PORTS*WIDTH-1:0]buffered_lvt_q_unrolled;
 
 always @(posedge clk) begin
   en_buffered <= en;
   push_buffered <= push;
   d_buffered <= d;
 end
-
-//TODO: logic
-integer i;
 
 always @(posedge clk) begin
   addr_unrolled[0] <= d_buffered;
@@ -40,19 +36,19 @@ always @(posedge clk) begin
   lvt_d_unrolled[PORTS*WIDTH-1:1] <= lvt_d_unrolled[PORTS*WIDTH-2:0];
   en[0] <= lvt_d_unrolled[PORTS*WIDTH-1];
   en[PORTS-1:1] <= en[PORTS-2:0];
-  lvt_q_unrolled <= buffered_lvt_q_unrolled;
-  lvt_q_unrolled[PORTS*WIDTH-1:1] <= lvt_q_unrolled[PORTS*WIDTH-2:0];
-  q <= lvt_q_unrolled[PORTS*WIDTH-1];
 
-  if(push_buffered) begin
-    for(i=0; i < PORTS; i++) begin
-      buffered_lvt_q_unrolled[(i+1)*WIDTH-1 -:WIDTH] <= lvt_q[i];
+  if (push_buffered) begin
+    for (int i = 0; i < PORTS; i++) begin
+      lvt_q_unrolled[(i+1)*WIDTH-1 -:WIDTH] <= lvt_q[i];
     end
+  end else begin
+    lvt_q_unrolled[PORTS*WIDTH-1:1] <= lvt_q_unrolled[PORTS*WIDTH-2:0];
   end
+  q <= lvt_q_unrolled[PORTS*WIDTH-1];
 end
-integer j;
+
 always @(posedge clk) begin
-  for(j=0; j < PORTS; j++) begin
+  for (int j = 0; j < PORTS; j++) begin
     addr[j] <= addr_unrolled[(j+1)*$clog2(DEPTH)-1 -:$clog2(DEPTH)];
     lvt_d[j] <= lvt_d_unrolled[(j+1)*WIDTH-1 -:WIDTH];
   end

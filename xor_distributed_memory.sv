@@ -13,12 +13,11 @@ module xor_distributed_memory #(
 
   logic [WIDTH-1:0]partial_xor_input[PORTS-1:0];
 
-  integer i, j;
   always_comb begin
-    for(i = 0; i < PORTS; i = i + 1) begin
+    for (int i = 0; i < PORTS; i = i + 1) begin
       partial_xor_input[i] = 0;
-      for(j = 0; j < PORTS; j = j + 1) begin
-        if (i!= j) begin
+      for (int j = 0; j < PORTS; j = j + 1) begin
+        if (i != j) begin
           partial_xor_input[i] = partial_xor_input[i] ^ ram_output[j][i];
         end
       end
@@ -37,6 +36,7 @@ module xor_distributed_memory #(
 
 endmodule // xor_distributed_memory
 
+/* verilator lint_off DECLFILENAME */
 module simple_distributed_ram #(
   parameter WIDTH = 8,
   parameter DEPTH = 256)(
@@ -49,6 +49,12 @@ module simple_distributed_ram #(
 
   reg [WIDTH-1:0]ram[DEPTH-1:0];
 
+  initial begin
+    for (int i = 0; i < DEPTH; i = i + 1) begin
+      ram[i] = '0;
+    end
+  end
+
   always @(posedge clk) begin
     if(en) begin
       ram[addr_d] <= d;
@@ -59,3 +65,4 @@ module simple_distributed_ram #(
   end
 
 endmodule // simple_distributed_ram
+/* verilator lint_on DECLFILENAME */
