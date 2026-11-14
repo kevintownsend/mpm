@@ -1,7 +1,0 @@
-Running: xsim.dir/lvt_memory_syn_behav/xsimk -simmode gui -wdb lvt_memory_syn_behav.wdb -simrunnum 0 -socket 35665
-Design successfully loaded
-Design Loading Memory Usage: 183464 KB (Peak: 183472 KB)
-Design Loading CPU Usage: 740 ms
-Simulation completed
-Simulation Memory Usage: 266264 KB (Peak: 322732 KB)
-Simulation CPU Usage: 750 ms

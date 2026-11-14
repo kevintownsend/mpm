@@ -1,7 +1,0 @@
-Running: xsim.dir/lvt_memory_tb_func_impl/xsimk -simmode gui -wdb lvt_memory_tb_func_impl.wdb -simrunnum 0 -socket 60365
-Design successfully loaded
-Design Loading Memory Usage: 179440 KB (Peak: 179448 KB)
-Design Loading CPU Usage: 770 ms
-Simulation completed
-Simulation Memory Usage: 261436 KB (Peak: 318708 KB)
-Simulation CPU Usage: 830 ms

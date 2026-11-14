@@ -1,9 +1,0 @@
-0.7
-2020.2
-May 21 2025
-22:59:56
-/home/kevin/workspace/bidirectional-xor-memory/dual_port_memory.sv,1756918209,systemVerilog,,/home/kevin/workspace/bidirectional-xor-memory/lvt_memory.sv,,dual_port_memory,,uvm,../../../../../../../../Xilinx/2025.1/data/rsb/busdef,,,,,
-/home/kevin/workspace/bidirectional-xor-memory/lvt_memory.sv,1756661040,systemVerilog,,/home/kevin/workspace/bidirectional-xor-memory/xor_distributed_memory.sv,,lvt_memory,,uvm,../../../../../../../../Xilinx/2025.1/data/rsb/busdef,,,,,
-/home/kevin/workspace/bidirectional-xor-memory/lvt_memory_tb.sv,1755812728,systemVerilog,,,,lvt_memory_tb,,uvm,../../../../../../../../Xilinx/2025.1/data/rsb/busdef,,,,,
-/home/kevin/workspace/bidirectional-xor-memory/syn/syn.sim/sim_1/synth/func/xsim/lvt_memory_tb_func_synth.v,1756921404,verilog,,,,dual_port_memory_0;dual_port_memory_1;glbl;lvt_memory_pipelined;lvt_memory_syn_pipelined;simple_distributed_ram_10;simple_distributed_ram_11;simple_distributed_ram_12;simple_distributed_ram_13;simple_distributed_ram_2;simple_distributed_ram_3;simple_distributed_ram_4;simple_distributed_ram_5;simple_distributed_ram_6;simple_distributed_ram_7;simple_distributed_ram_8;simple_distributed_ram_9;xor_distributed_memory_pipelined,,uvm,../../../../../../../../Xilinx/2025.1/data/rsb/busdef,,,,,
-/home/kevin/workspace/bidirectional-xor-memory/xor_distributed_memory.sv,1756661097,systemVerilog,,/home/kevin/workspace/bidirectional-xor-memory/lvt_memory_tb.sv,,simple_distributed_ram;xor_distributed_memory,,uvm,../../../../../../../../Xilinx/2025.1/data/rsb/busdef,,,,,
