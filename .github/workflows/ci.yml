@@ -1,8 +1,10 @@
 name: ci
 
 on:
+  push:
+    branches: [main, development]
   pull_request:
-    branches: [main]
+    branches: [main, development]
 
 jobs:
   tests:
@@ -13,8 +15,13 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: install verilator
-        run: sudo apt install verilator
+      - name: Install Verilator
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y verilator
 
-      - name: run tests
-        run: make sim | grep -q Passed
+      - name: Run simulations
+        run: make sim
+
+      - name: Lint synthesis wrappers
+        run: make lint_syn
