@@ -1,0 +1,1 @@
+We propose a generalization to a previous XOR memory implementation to allow for any number of full, read-only, and write-only ports. This implementation creates these additional ports by encoding and decoding the data entries with XOR logic.

@@ -20,28 +20,31 @@ module xor_distributed_memory_pipelined #(
   end
 
   logic [WIDTH-1:0]ram_output[PORTS-1:0][PORTS-1:0];
+  logic [WIDTH-1:0]ram_output_diag_buffered[PORTS-1:0];
 
   logic [WIDTH-1:0]partial_xor_input[PORTS-1:0];
   logic [WIDTH-1:0]partial_xor_input_buffered[PORTS-1:0];
 
   always @(posedge clk) begin
     partial_xor_input_buffered <= partial_xor_input;
+    for (int i = 0; i < PORTS; i = i + 1) begin
+      ram_output_diag_buffered[i] <= ram_output[i][i];
+    end
   end
 
-  integer i, j;
   always_comb begin
-    for(i = 0; i < PORTS; i = i + 1) begin
+    for (int i = 0; i < PORTS; i = i + 1) begin
       partial_xor_input[i] = 0;
-      for(j = 0; j < PORTS; j = j + 1) begin
-        if (i!= j) begin
+      for (int j = 0; j < PORTS; j = j + 1) begin
+        if (i != j) begin
           partial_xor_input[i] = partial_xor_input[i] ^ ram_output[j][i];
         end
       end
     end
   end
   always @(posedge clk) begin
-    for(i = 0; i < PORTS; i = i + 1) begin
-      q[i] <= partial_xor_input_buffered[i] ^ ram_output[i][i];
+    for (int i = 0; i < PORTS; i = i + 1) begin
+      q[i] <= partial_xor_input_buffered[i] ^ ram_output_diag_buffered[i];
     end
   end
 

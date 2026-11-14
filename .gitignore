@@ -1,12 +1,33 @@
-obj_dir
-doc/comment.cut
-doc/paper.aux
-doc/paper.bbl
-doc/paper.blg
-doc/paper.log
-doc/paper.out
+# Verilator build outputs
+obj_dir/
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.nav
+*.snm
+*.vrb
+*.cut
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*-blx.bib
+*.run.xml
+*.bcf
+
+# Vivado generated files
 syn/syn.cache/
 syn/syn.hw/
 syn/syn.runs/
 syn/syn.sim/
+.Xil/
+*.jou
+*.str
+*.dcp
 

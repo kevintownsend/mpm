@@ -14,6 +14,12 @@ module dual_port_memory #(
 
   reg [WIDTH-1:0]ram[DEPTH-1:0];
 
+  initial begin
+    for (int i = 0; i < DEPTH; i++) begin
+      ram[i] = '0;
+    end
+  end
+
   always @(posedge clk) begin
     if(en_a) begin
       ram[addr_a] <= d_a;

@@ -23,12 +23,11 @@ module xor_memory #(
     en_buffered <= en;
   end
 
-  integer i, j;
   always_comb begin
-    for(i = 0; i < PORTS; i = i + 1) begin
+    for (int i = 0; i < PORTS; i = i + 1) begin
       partial_xor_input[i] = 0;
-      for(j = 0; j < PORTS; j = j + 1) begin
-        if (i!= j) begin
+      for (int j = 0; j < PORTS; j = j + 1) begin
+        if (i != j) begin
           partial_xor_input[i] = partial_xor_input[i] ^ ram_output[j][i];
         end
       end
@@ -47,6 +46,7 @@ module xor_memory #(
 
 endmodule // xor_memory
 
+/* verilator lint_off DECLFILENAME */
 module simple_ram #(
   parameter WIDTH = 8,
   parameter DEPTH = 256)(
@@ -59,11 +59,22 @@ module simple_ram #(
 
   reg [WIDTH-1:0]ram[DEPTH-1:0];
 
+  initial begin
+    for (int i = 0; i < DEPTH; i = i + 1) begin
+      ram[i] = '0;
+    end
+  end
+
   always @(posedge clk) begin
-    if(en) begin
+    if (en) begin
       ram[addr_d] <= d;
     end
-    q <= ram[addr_q];
+    if (en && (addr_d == addr_q)) begin
+      q <= d;
+    end else begin
+      q <= ram[addr_q];
+    end
   end
 
 endmodule // simple_ram
+/* verilator lint_on DECLFILENAME */

@@ -22,39 +22,62 @@ module simple_dual_port_memory_wrapper_tb;
   );
 
   initial begin
-      clk = 1;
+    clk = 1;
     forever begin
       #5 clk = ~clk;
     end
   end
-  integer i;
+
   initial begin
-    //TODO: add tests.
     addr_d = 0;
     d = 0;
     en = 0;
     addr_q = 0;
-    #11 en = 1;
+    @(negedge clk);
+
+    // Write 42 to address 3, then read it back.
+    en = 1;
     addr_d = 3;
     d = 42;
-    #10 en = 0;
+    @(negedge clk);
+    en = 0;
     addr_q = 3;
-    #10;
-    if(q != 42) begin
-      $display("FAILED");
-      $finish();
+    @(negedge clk);
+    if (q != 42) begin
+      $fatal(1, "FAILED: expected 42, got %0d", q);
     end
-    #10 addr_q = 5;
+
+    // Write-first forwarding when en == 1 and addr_d == addr_q.
+    addr_q = 5;
     addr_d = 5;
     en = 1;
     d = 41;
-    #10 en = 0;
-    if(q != 41) begin
-      $display("FAILED");
-      $finish();
+    @(negedge clk);
+    en = 0;
+    if (q != 41) begin
+      $fatal(1, "FAILED: expected write-forwarded 41, got %0d", q);
     end
 
-    #100 $display("Passed");
+    // Ensure forwarding does NOT happen when en == 0 and addr_d == addr_q.
+    addr_q = 5;
+    addr_d = 5;
+    en = 0;
+    d = 99;
+    @(negedge clk);
+    if (q != 41) begin
+      $fatal(1, "FAILED: spurious forwarding with en=0, expected 41, got %0d", q);
+    end
+
+    // Back-to-back read switching back to address 3.
+    addr_q = 3;
+    addr_d = 3;
+    d = 123;
+    @(negedge clk);
+    if (q != 42) begin
+      $fatal(1, "FAILED: expected 42 at addr 3, got %0d", q);
+    end
+
+    $display("Passed");
     $finish();
   end
 
