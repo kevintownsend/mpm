@@ -13,6 +13,11 @@ This repository accompanies the ACM/SIGDA FPGA '26 paper:
 > DOI: [10.1145/3748173.3779548](https://doi.org/10.1145/3748173.3779548) · [Short Paper (PDF)](doc/fpga26/paper.pdf) · [Poster (PDF)](doc/fpga26/poster/poster.pdf) · [Full Manuscript (PDF)](doc/paper.pdf)
 
 - **Key Idea**: Generalizes XOR multi-port memory ($a \oplus b \oplus b = a$) to support bidirectional (read/write) ports using $F^2$ simple dual-port RAMs, and uses bidirectional XOR memory as the Live Value Table (LVT) index to scale wide multi-port memories with $F(F - 1)/2$ data BRAMs.
+
+![Generalized bidirectional multi-port XOR memory architecture with 2 full ports, 2 write-only ports, and 2 read-only ports](doc/xor_architecture.png)
+
+*Generalized XOR memory architecture (`2` full, `2` write-only, and `2` read-only ports using `22` RAMs). The SystemVerilog modules in this repository implement the symmetric bidirectional configuration (`FULL PORTS = PORTS`, using `PORTS²` RAMs for XOR and `PORTS*(PORTS-1)/2` data BRAMs for LVT).*
+
 - **Vivado Synthesis Summary** (`WIDTH = 32`, `DEPTH = 1024`, targeting an AMD Virtex UltraScale+ HBM VU47P-3; 16- and 32-port designs wrapped with serialized I/O in [`syn/`](syn/)):
 
 | Ports | XOR BRAM (`Fmax` / BRAMs / LUTs) | LVT (`Fmax` / BRAMs / LUTs) | LVT Pipelined (`Fmax` / BRAMs / LUTs) |
