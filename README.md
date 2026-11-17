@@ -1,6 +1,27 @@
-# bidirectional-xor-memory
+# mpm
 
-Multi-port memory architectures in SystemVerilog using bidirectional XOR banks and Live Value Tables (LVT), targeting FPGA block RAM (BRAM) and distributed LUT RAM primitives.
+[![CI](https://github.com/kevintownsend/mpm/actions/workflows/ci.yml/badge.svg)](https://github.com/kevintownsend/mpm/actions/workflows/ci.yml)
+
+Parameterized multi-port memory architectures in SystemVerilog using bidirectional XOR banks and Live Value Tables (LVT), targeting FPGA block RAM (BRAM) and distributed LUT RAM primitives.
+
+## FPGA '26 Publication & Synthesis Highlights
+
+This repository accompanies the ACM/SIGDA FPGA '26 paper:
+
+> **Multi-Port Memory with Bidirectional Ports for FPGAs Using XOR and LVT Methods**  
+> Kevin Townsend — *Proceedings of the 2026 ACM/SIGDA International Symposium on Field Programmable Gate Arrays (FPGA '26)*  
+> DOI: [10.1145/3748173.3779548](https://doi.org/10.1145/3748173.3779548) · [Short Paper (PDF)](doc/fpga26/paper.pdf) · [Poster (PDF)](doc/fpga26/poster/poster.pdf) · [Full Manuscript (PDF)](doc/paper.pdf)
+
+- **Key Idea**: Generalizes XOR multi-port memory ($a \oplus b \oplus b = a$) to support bidirectional (read/write) ports using $F^2$ simple dual-port RAMs, and uses bidirectional XOR memory as the Live Value Table (LVT) index to scale wide multi-port memories with $F(F - 1)/2$ data BRAMs.
+- **Vivado Synthesis Summary** (`WIDTH = 32`, `DEPTH = 1024`, targeting an AMD Virtex UltraScale+ HBM VU47P-3; 16- and 32-port designs wrapped with serialized I/O in [`syn/`](syn/)):
+
+| Ports | XOR BRAM (`Fmax` / BRAMs / LUTs) | LVT (`Fmax` / BRAMs / LUTs) | LVT Pipelined (`Fmax` / BRAMs / LUTs) |
+| --- | --- | --- | --- |
+| 2 | 625 MHz / 4 / 144 | 588 MHz / 1 / 191 | 714 MHz / 1 / 119 |
+| 4 | 476 MHz / 16 / 512 | 556 MHz / 6 / 1,144 | 667 MHz / 6 / 1,268 |
+| 8 | 370 MHz / 64 / 1,920 | 455 MHz / 28 / 5,428 | 625 MHz / 28 / 5,588 |
+| 16 | 263 MHz / 256 / 6,656 | 250 MHz / 120 / 31,075 | 417 MHz / 120 / 31,328 |
+| 32 | 123 MHz / 1,024 / 10,240 | 127 MHz / 496 / 161,216 | 247 MHz / 496 / 162,960 |
 
 ## Modules
 
@@ -32,7 +53,7 @@ All top-level modules are parameterized by `WIDTH`, `DEPTH`, and `PORTS` (`PORTS
 - [`dual_port_memory.sv`](dual_port_memory.sv): True dual-port RAM primitive for LVT data banks.
 - [`syn/`](syn/): Serialized shift-register I/O wrappers and Vivado project files (`syn/syn.xpr`) for out-of-context synthesis benchmarking.
 
-## Simulation
+## Simulation & Linting
 
 Install Verilator:
 
@@ -46,6 +67,12 @@ Run all testbenches (compiled with `verilator -Wall --binary`):
 make sim
 ```
 
+Lint all synthesis wrappers in `syn/`:
+
+```sh
+make lint_syn
+```
+
 Individual targets are also available (`make lvt_sim`, `make lvt_pipelined_sim`, `make simple_dual_port_memory_wrapper_sim`), and build artifacts can be removed with:
 
 ```sh
@@ -57,5 +84,5 @@ make clean
 To contribute, please file an issue or open a pull request on GitHub:
 
 ```sh
-git clone https://github.com/kevintownsend/bidirectional-xor-memory.git
+git clone https://github.com/kevintownsend/mpm.git
 ```
