@@ -79,6 +79,12 @@ To emit compressed FST waveforms under `build/` for debugging:
 make -j TRACE=1 sim
 ```
 
+Run the parameterized `cocotb` + `pytest` randomized verification matrix (all 6 symmetric modules across `PORTS = 2, 3, 4, 5, 8`):
+
+```sh
+make test
+```
+
 Lint all synthesis wrappers in `syn/`:
 
 ```sh

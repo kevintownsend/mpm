@@ -15,6 +15,7 @@ SYN_TOPS := \
 	xor_distributed_memory_syn
 
 RTL_SRCS := $(wildcard rtl/*.sv)
+PYTEST ?= $(if $(wildcard .venv/bin/pytest),.venv/bin/pytest,pytest)
 VERILATOR_FLAGS := -Wall -y rtl
 ifeq ($(TRACE),1)
 VERILATOR_FLAGS += --trace-fst +define+TRACE
@@ -22,7 +23,7 @@ endif
 
 RUN_TARGETS := $(addprefix run_,$(TBS))
 
-.PHONY: sim lvt_sim lvt_pipelined_sim simple_dual_port_memory_wrapper_sim lint_syn clean $(RUN_TARGETS)
+.PHONY: sim lvt_sim lvt_pipelined_sim simple_dual_port_memory_wrapper_sim test lint_syn clean $(RUN_TARGETS)
 
 sim: $(RUN_TARGETS)
 
@@ -42,6 +43,9 @@ run_$(1): build/$(1)/V$(1)
 endef
 
 $(foreach tb,$(TBS),$(eval $(call TB_RULES,$(tb))))
+
+test:
+	$(PYTEST) -v tb/test_runner.py
 
 lint_syn:
 	@for top in $(SYN_TOPS); do \
