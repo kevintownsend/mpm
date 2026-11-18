@@ -1,0 +1,10 @@
+rtl/dual_port_memory.sv
+rtl/simple_distributed_ram.sv
+rtl/simple_dual_port_memory.sv
+rtl/simple_dual_port_memory_wrapper.sv
+rtl/xor_memory.sv
+rtl/xor_bram_memory_pipelined.sv
+rtl/xor_distributed_memory.sv
+rtl/xor_distributed_memory_pipelined.sv
+rtl/lvt_memory.sv
+rtl/lvt_memory_pipelined.sv

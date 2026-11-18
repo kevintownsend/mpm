@@ -42,20 +42,20 @@ All top-level modules are parameterized by `WIDTH`, `DEPTH`, and `PORTS` (`PORTS
 
 | Module | Backing Storage | Read Latency | Notes |
 | --- | --- | --- | --- |
-| [`xor_memory`](xor_memory.sv) | `simple_dual_port_memory_wrapper` | 1 cycle | Buffered write with same-cycle write forwarding |
-| [`xor_bram_memory_pipelined`](xor_bram_memory_pipelined.sv) | `simple_dual_port_memory_wrapper` | 2 cycles | Registered output stage for BRAM timing closure |
-| [`xor_distributed_memory`](xor_distributed_memory.sv) | `simple_distributed_ram` | 0 cycles (comb.) | Synchronous write, combinational read |
-| [`xor_distributed_memory_pipelined`](xor_distributed_memory_pipelined.sv) | `simple_distributed_ram` | 2 cycles | Pipelined read/write path; avoid adjacent-cycle writes |
-| [`lvt_memory`](lvt_memory.sv) | `dual_port_memory` + `xor_distributed_memory` | 1 cycle | XOR-based LVT index with BRAM bank storage |
-| [`lvt_memory_pipelined`](lvt_memory_pipelined.sv) | `dual_port_memory` + `xor_distributed_memory_pipelined` | 2 cycles | Pipelined LVT + registered bank outputs; avoid adjacent-cycle writes |
+| [`xor_memory`](rtl/xor_memory.sv) | `simple_dual_port_memory_wrapper` | 1 cycle | Buffered write with same-cycle write forwarding |
+| [`xor_bram_memory_pipelined`](rtl/xor_bram_memory_pipelined.sv) | `simple_dual_port_memory_wrapper` | 2 cycles | Registered output stage for BRAM timing closure |
+| [`xor_distributed_memory`](rtl/xor_distributed_memory.sv) | `simple_distributed_ram` | 0 cycles (comb.) | Synchronous write, combinational read |
+| [`xor_distributed_memory_pipelined`](rtl/xor_distributed_memory_pipelined.sv) | `simple_distributed_ram` | 2 cycles | Pipelined read/write path; avoid adjacent-cycle writes |
+| [`lvt_memory`](rtl/lvt_memory.sv) | `dual_port_memory` + `xor_distributed_memory` | 1 cycle | XOR-based LVT index with BRAM bank storage |
+| [`lvt_memory_pipelined`](rtl/lvt_memory_pipelined.sv) | `dual_port_memory` + `xor_distributed_memory_pipelined` | 2 cycles | Pipelined LVT + registered bank outputs; avoid adjacent-cycle writes |
 
 ### Supporting Primitives & Synthesis Wrappers
 
-- [`simple_dual_port_memory.sv`](simple_dual_port_memory.sv): Generic synchronous simple dual-port RAM.
-- [`simple_dual_port_memory_wrapper.sv`](simple_dual_port_memory_wrapper.sv): Adds read-during-write bypass forwarding around `simple_dual_port_memory`.
-- [`simple_dual_port_memory_xilinx.sv`](simple_dual_port_memory_xilinx.sv): Xilinx `xpm_memory_sdpram` wrapper for Vivado flows.
-- [`simple_distributed_ram.sv`](simple_distributed_ram.sv): Synchronous write / combinational read distributed RAM primitive.
-- [`dual_port_memory.sv`](dual_port_memory.sv): True dual-port RAM primitive for LVT data banks.
+- [`rtl/simple_dual_port_memory.sv`](rtl/simple_dual_port_memory.sv): Generic synchronous simple dual-port RAM.
+- [`rtl/simple_dual_port_memory_wrapper.sv`](rtl/simple_dual_port_memory_wrapper.sv): Adds read-during-write bypass forwarding around `simple_dual_port_memory`.
+- [`rtl/simple_dual_port_memory_xilinx.sv`](rtl/simple_dual_port_memory_xilinx.sv): Xilinx `xpm_memory_sdpram` wrapper for Vivado flows.
+- [`rtl/simple_distributed_ram.sv`](rtl/simple_distributed_ram.sv): Synchronous write / combinational read distributed RAM primitive.
+- [`rtl/dual_port_memory.sv`](rtl/dual_port_memory.sv): True dual-port RAM primitive for LVT data banks.
 - [`syn/`](syn/): Serialized shift-register I/O wrappers and Vivado project files (`syn/syn.xpr`) for out-of-context synthesis benchmarking.
 
 ## Simulation & Linting
@@ -66,10 +66,16 @@ Install Verilator:
 sudo apt install verilator
 ```
 
-Run all testbenches (compiled with `verilator -Wall --binary`):
+Run all testbenches in parallel (compiled with `verilator -Wall --binary`):
 
 ```sh
-make sim
+make -j sim
+```
+
+To emit compressed FST waveforms under `build/` for debugging:
+
+```sh
+make -j TRACE=1 sim
 ```
 
 Lint all synthesis wrappers in `syn/`:

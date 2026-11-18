@@ -1,5 +1,11 @@
-# Verilator build outputs
+# Verilator & Python build/test outputs
 obj_dir/
+build/
+.venv/
+__pycache__/
+.pytest_cache/
+*.fst
+*.vcd
 
 # LaTeX build artifacts
 *.aux
@@ -26,6 +32,7 @@ syn/syn.cache/
 syn/syn.hw/
 syn/syn.runs/
 syn/syn.sim/
+syn/out/
 .Xil/
 *.jou
 *.str

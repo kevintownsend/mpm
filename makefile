@@ -1,32 +1,51 @@
-.PHONY: sim lvt_sim lvt_pipelined_sim simple_dual_port_memory_wrapper_sim lint_syn clean
+TBS := \
+	lvt_memory_tb \
+	lvt_memory_pipelined_tb \
+	simple_dual_port_memory_wrapper_tb \
+	xor_memory_tb \
+	xor_distributed_memory_tb \
+	xor_bram_memory_pipelined_tb \
+	xor_distributed_memory_pipelined_tb
 
-sim: lvt_sim lvt_pipelined_sim simple_dual_port_memory_wrapper_sim
-	verilator -Wall --binary --top-module xor_memory_tb xor_memory_tb.sv xor_memory.sv simple_dual_port_memory_wrapper.sv simple_dual_port_memory.sv
-	obj_dir/Vxor_memory_tb
-	verilator -Wall --binary --top-module xor_distributed_memory_tb xor_distributed_memory_tb.sv xor_distributed_memory.sv simple_distributed_ram.sv
-	obj_dir/Vxor_distributed_memory_tb
-	verilator -Wall --binary --top-module xor_bram_memory_pipelined_tb xor_bram_memory_pipelined_tb.sv xor_bram_memory_pipelined.sv simple_dual_port_memory_wrapper.sv simple_dual_port_memory.sv
-	obj_dir/Vxor_bram_memory_pipelined_tb
-	verilator -Wall --binary --top-module xor_distributed_memory_pipelined_tb xor_distributed_memory_pipelined_tb.sv xor_distributed_memory_pipelined.sv simple_distributed_ram.sv
-	obj_dir/Vxor_distributed_memory_pipelined_tb
+SYN_TOPS := \
+	lvt_memory_syn \
+	lvt_memory_syn_pipelined \
+	xor_bram_memory_pipelined_syn \
+	xor_distributed_memory_syn
 
-lvt_sim:
-	verilator -Wall --binary --top-module lvt_memory_tb lvt_memory_tb.sv lvt_memory.sv xor_distributed_memory.sv simple_distributed_ram.sv dual_port_memory.sv
-	obj_dir/Vlvt_memory_tb
+RTL_SRCS := $(wildcard rtl/*.sv)
+VERILATOR_FLAGS := -Wall -y rtl
+ifeq ($(TRACE),1)
+VERILATOR_FLAGS += --trace-fst +define+TRACE
+endif
 
-lvt_pipelined_sim:
-	verilator -Wall --binary --top-module lvt_memory_pipelined_tb lvt_memory_pipelined_tb.sv lvt_memory_pipelined.sv xor_distributed_memory_pipelined.sv simple_distributed_ram.sv dual_port_memory.sv
-	obj_dir/Vlvt_memory_pipelined_tb
+RUN_TARGETS := $(addprefix run_,$(TBS))
 
-simple_dual_port_memory_wrapper_sim:
-	verilator -Wall --binary --top-module simple_dual_port_memory_wrapper_tb simple_dual_port_memory_wrapper_tb.sv simple_dual_port_memory_wrapper.sv simple_dual_port_memory.sv
-	obj_dir/Vsimple_dual_port_memory_wrapper_tb
+.PHONY: sim lvt_sim lvt_pipelined_sim simple_dual_port_memory_wrapper_sim lint_syn clean $(RUN_TARGETS)
+
+sim: $(RUN_TARGETS)
+
+lvt_sim: run_lvt_memory_tb
+
+lvt_pipelined_sim: run_lvt_memory_pipelined_tb
+
+simple_dual_port_memory_wrapper_sim: run_simple_dual_port_memory_wrapper_tb
+
+define TB_RULES
+build/$(1)/V$(1): tb/$(1).sv $$(RTL_SRCS) makefile
+	mkdir -p build/$(1)
+	verilator $$(VERILATOR_FLAGS) --binary --Mdir build/$(1) --top-module $(1) $$<
+
+run_$(1): build/$(1)/V$(1)
+	$$<
+endef
+
+$(foreach tb,$(TBS),$(eval $(call TB_RULES,$(tb))))
 
 lint_syn:
-	verilator -Wall --lint-only --top-module lvt_memory_syn syn/lvt_memory_syn.sv lvt_memory.sv xor_distributed_memory.sv simple_distributed_ram.sv dual_port_memory.sv
-	verilator -Wall --lint-only --top-module lvt_memory_syn_pipelined syn/lvt_memory_syn_pipelined.sv lvt_memory_pipelined.sv xor_distributed_memory_pipelined.sv simple_distributed_ram.sv dual_port_memory.sv
-	verilator -Wall --lint-only --top-module xor_bram_memory_pipelined_syn syn/xor_bram_memory_pipelined_syn.sv xor_bram_memory_pipelined.sv simple_dual_port_memory_wrapper.sv simple_dual_port_memory.sv
-	verilator -Wall --lint-only --top-module xor_distributed_memory_syn syn/xor_distributed_memory_syn.sv xor_distributed_memory.sv simple_distributed_ram.sv
+	@for top in $(SYN_TOPS); do \
+		verilator -Wall -y rtl --lint-only --top-module $$top syn/$$top.sv || exit 1; \
+	done
 
 clean:
-	rm -rf obj_dir
+	rm -rf obj_dir build

@@ -28,6 +28,13 @@ module simple_dual_port_memory_wrapper_tb;
     end
   end
 
+`ifdef TRACE
+  initial begin
+    $dumpfile("build/simple_dual_port_memory_wrapper_tb.fst");
+    $dumpvars(0, simple_dual_port_memory_wrapper_tb);
+  end
+`endif
+
   initial begin
     addr_d = 0;
     d = 0;

@@ -28,6 +28,13 @@ module xor_bram_memory_pipelined_tb;
     forever #5 clk = ~clk;
   end
 
+`ifdef TRACE
+  initial begin
+    $dumpfile("build/xor_bram_memory_pipelined_tb.fst");
+    $dumpvars(0, xor_bram_memory_pipelined_tb);
+  end
+`endif
+
   task automatic clear_inputs();
     for (int i = 0; i < PORTS; i++) begin
       addr[i] = '0;
