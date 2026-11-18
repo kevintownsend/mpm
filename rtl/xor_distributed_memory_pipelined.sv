@@ -10,10 +10,14 @@ module xor_distributed_memory_pipelined #(
   output logic [WIDTH-1:0]         q[PORTS-1:0]
 );
 
-  initial begin
-    if (PORTS < 2) begin
-      $fatal(1, "PORTS (%0d) must be at least 2", PORTS);
-    end
+  if (PORTS < 2) begin : gen_check_ports
+    $error("PORTS (%0d) must be at least 2", PORTS);
+  end
+  if (DEPTH < 2) begin : gen_check_depth
+    $error("DEPTH (%0d) must be at least 2", DEPTH);
+  end
+  if (WIDTH < 1) begin : gen_check_width
+    $error("WIDTH (%0d) must be at least 1", WIDTH);
   end
 
   logic [$clog2(DEPTH)-1:0] addr_buffered[PORTS-1:0];

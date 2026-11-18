@@ -5,7 +5,8 @@ TBS := \
 	xor_memory_tb \
 	xor_distributed_memory_tb \
 	xor_bram_memory_pipelined_tb \
-	xor_distributed_memory_pipelined_tb
+	xor_distributed_memory_pipelined_tb \
+	xor_asymmetric_memory_tb
 
 SYN_TOPS := \
 	lvt_memory_syn \

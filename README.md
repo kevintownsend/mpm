@@ -42,8 +42,9 @@ All top-level modules are parameterized by `WIDTH`, `DEPTH`, and `PORTS` (`PORTS
 
 | Module | Backing Storage | Read Latency | Notes |
 | --- | --- | --- | --- |
-| [`xor_memory`](rtl/xor_memory.sv) | `simple_dual_port_memory_wrapper` | 1 cycle | Buffered write with same-cycle write forwarding |
-| [`xor_bram_memory_pipelined`](rtl/xor_bram_memory_pipelined.sv) | `simple_dual_port_memory_wrapper` | 2 cycles | Registered output stage for BRAM timing closure |
+| [`xor_memory`](rtl/xor_memory.sv) | `simple_dual_port_memory_wrapper` (`USE_XPM=0`) or `simple_dual_port_memory_xilinx` (`USE_XPM=1`) | 1 cycle | Buffered write with same-cycle write forwarding |
+| [`xor_asymmetric_memory`](rtl/xor_asymmetric_memory.sv) | `simple_dual_port_memory_wrapper` / `simple_dual_port_memory_xilinx` | 1 cycle | Arbitrary `FULL_PORTS`, `WRITE_PORTS`, and `READ_PORTS` (`(W + F)(W + F + R) - W` RAMs) |
+| [`xor_bram_memory_pipelined`](rtl/xor_bram_memory_pipelined.sv) | `simple_dual_port_memory_wrapper` / `simple_dual_port_memory_xilinx` | 2 cycles | Registered output stage for BRAM timing closure |
 | [`xor_distributed_memory`](rtl/xor_distributed_memory.sv) | `simple_distributed_ram` | 0 cycles (comb.) | Synchronous write, combinational read |
 | [`xor_distributed_memory_pipelined`](rtl/xor_distributed_memory_pipelined.sv) | `simple_distributed_ram` | 2 cycles | Pipelined read/write path; avoid adjacent-cycle writes |
 | [`lvt_memory`](rtl/lvt_memory.sv) | `dual_port_memory` + `xor_distributed_memory` | 1 cycle | XOR-based LVT index with BRAM bank storage |
@@ -53,7 +54,7 @@ All top-level modules are parameterized by `WIDTH`, `DEPTH`, and `PORTS` (`PORTS
 
 - [`rtl/simple_dual_port_memory.sv`](rtl/simple_dual_port_memory.sv): Generic synchronous simple dual-port RAM.
 - [`rtl/simple_dual_port_memory_wrapper.sv`](rtl/simple_dual_port_memory_wrapper.sv): Adds read-during-write bypass forwarding around `simple_dual_port_memory`.
-- [`rtl/simple_dual_port_memory_xilinx.sv`](rtl/simple_dual_port_memory_xilinx.sv): Xilinx `xpm_memory_sdpram` wrapper for Vivado flows.
+- [`rtl/simple_dual_port_memory_xilinx.sv`](rtl/simple_dual_port_memory_xilinx.sv): Xilinx `xpm_memory_sdpram` wrapper selected via `USE_XPM=1` on BRAM XOR modules for Vivado flows.
 - [`rtl/simple_distributed_ram.sv`](rtl/simple_distributed_ram.sv): Synchronous write / combinational read distributed RAM primitive.
 - [`rtl/dual_port_memory.sv`](rtl/dual_port_memory.sv): True dual-port RAM primitive for LVT data banks.
 - [`syn/`](syn/): Serialized shift-register I/O wrappers and Vivado project files (`syn/syn.xpr`) for out-of-context synthesis benchmarking.

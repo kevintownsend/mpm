@@ -1,7 +1,8 @@
 module xor_bram_memory_pipelined_syn #(
   parameter WIDTH = 32,
   parameter DEPTH = 1024,
-  parameter PORTS = 2
+  parameter PORTS = 2,
+  parameter bit USE_XPM = 0
 ) (
   input  logic clk,
   input  logic d,
@@ -47,7 +48,8 @@ module xor_bram_memory_pipelined_syn #(
   xor_bram_memory_pipelined #(
     .WIDTH(WIDTH),
     .DEPTH(DEPTH),
-    .PORTS(PORTS)
+    .PORTS(PORTS),
+    .USE_XPM(USE_XPM)
   ) dut (
     .clk(clk),
     .addr(addr),

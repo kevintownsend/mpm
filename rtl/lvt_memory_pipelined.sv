@@ -10,6 +10,16 @@ module lvt_memory_pipelined #(
   output logic [WIDTH-1:0]         q[PORTS-1:0]
 );
 
+  if (PORTS < 2) begin : gen_check_ports
+    $error("PORTS (%0d) must be at least 2", PORTS);
+  end
+  if (DEPTH < 2) begin : gen_check_depth
+    $error("DEPTH (%0d) must be at least 2", DEPTH);
+  end
+  if (WIDTH < 1) begin : gen_check_width
+    $error("WIDTH (%0d) must be at least 1", WIDTH);
+  end
+
   logic [WIDTH-1:0] intermediate_output[PORTS-1:0][PORTS-1:0];
   logic [WIDTH-1:0] intermediate_output_buffered[PORTS-1:0][PORTS-1:0];
 
@@ -41,9 +51,6 @@ module lvt_memory_pipelined #(
 
   logic [$clog2(PORTS)-1:0] port_numbers[PORTS-1:0];
   initial begin
-    if (PORTS < 2) begin
-      $fatal(1, "PORTS (%0d) must be at least 2", PORTS);
-    end
     for (int j = 0; j < PORTS; j++) begin
       port_numbers[j] = j[$clog2(PORTS)-1:0];
     end
