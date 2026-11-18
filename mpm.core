@@ -1,0 +1,109 @@
+CAPI=2:
+name: kevintownsend:memory:mpm:1.0.0
+description: Parameterizable multi-ported FPGA memories using bidirectional XOR and Live Value Table (LVT) architectures
+
+filesets:
+  rtl:
+    files:
+      - rtl/dual_port_memory.sv
+      - rtl/simple_distributed_ram.sv
+      - rtl/simple_dual_port_memory.sv
+      - rtl/simple_dual_port_memory_wrapper.sv
+      - rtl/xor_memory.sv
+      - rtl/xor_asymmetric_memory.sv
+      - rtl/xor_bram_memory_pipelined.sv
+      - rtl/xor_distributed_memory.sv
+      - rtl/xor_distributed_memory_pipelined.sv
+      - rtl/lvt_memory.sv
+      - rtl/lvt_memory_pipelined.sv
+    file_type: systemVerilogSource
+
+  xilinx_xpm:
+    files:
+      - rtl/simple_dual_port_memory_xilinx.sv
+    file_type: systemVerilogSource
+
+  syn:
+    files:
+      - syn/lvt_memory_syn.sv
+      - syn/lvt_memory_syn_pipelined.sv
+      - syn/xor_bram_memory_pipelined_syn.sv
+      - syn/xor_distributed_memory_syn.sv
+    file_type: systemVerilogSource
+
+  tb:
+    files:
+      - tb/xor_memory_tb.sv
+    file_type: systemVerilogSource
+
+parameters:
+  WIDTH:
+    datatype: int
+    default: 32
+    paramtype: vlogparam
+    description: Word width in bits
+  DEPTH:
+    datatype: int
+    default: 1024
+    paramtype: vlogparam
+    description: Memory depth in words
+  PORTS:
+    datatype: int
+    default: 4
+    paramtype: vlogparam
+    description: Number of concurrent R/W ports
+
+targets:
+  default:
+    filesets:
+      - rtl
+
+  lint:
+    default_tool: verilator
+    filesets:
+      - rtl
+    toplevel: xor_memory
+    parameters:
+      - WIDTH=32
+      - DEPTH=1024
+      - PORTS=4
+    tools:
+      verilator:
+        mode: lint-only
+        exe: "false"
+        verilator_options:
+          - -Wall
+
+  sim:
+    default_tool: verilator
+    filesets:
+      - rtl
+      - tb
+    toplevel: xor_memory_tb
+    tools:
+      verilator:
+        mode: binary
+        exe: "false"
+        verilator_options:
+          - --Mdir
+          - .
+          - -Wall
+
+  synth:
+    default_tool: vivado
+    filesets:
+      - rtl
+      - xilinx_xpm
+      - syn
+    toplevel: xor_bram_memory_pipelined_syn
+    parameters:
+      - WIDTH=32
+      - DEPTH=1024
+      - PORTS=4
+    tools:
+      vivado:
+        part: xc7a200tiffg1156-1L
+        pnr: none
+      yosys:
+        arch: xilinx
+        output_format: json

@@ -16,6 +16,17 @@ SYN_TOPS := \
 
 RTL_SRCS := $(wildcard rtl/*.sv)
 PYTEST ?= $(if $(wildcard .venv/bin/pytest),.venv/bin/pytest,pytest)
+VIVADO ?= $(if $(wildcard /home/kevin/Xilinx/2025.1/Vivado/bin/vivado),/home/kevin/Xilinx/2025.1/Vivado/bin/vivado,vivado)
+
+SYNTH_TOP ?= xor_bram_memory_pipelined
+SYNTH_PART ?= xcvu47p-fsvh2892-3-e
+SYNTH_WIDTH ?= 32
+SYNTH_DEPTH ?= 1024
+SYNTH_PORTS ?= 4
+SYNTH_CLK_NS ?= 2.5
+USE_XPM ?= 0
+SYNTH_OUT_DIR ?= syn/out/$(SYNTH_TOP)_$(SYNTH_PORTS)p_xpm$(USE_XPM)
+
 VERILATOR_FLAGS := -Wall -y rtl
 ifeq ($(TRACE),1)
 VERILATOR_FLAGS += --trace-fst +define+TRACE
@@ -23,7 +34,7 @@ endif
 
 RUN_TARGETS := $(addprefix run_,$(TBS))
 
-.PHONY: sim lvt_sim lvt_pipelined_sim simple_dual_port_memory_wrapper_sim test lint_syn clean $(RUN_TARGETS)
+.PHONY: sim lvt_sim lvt_pipelined_sim simple_dual_port_memory_wrapper_sim test lint_syn synth clean $(RUN_TARGETS)
 
 sim: $(RUN_TARGETS)
 
@@ -51,6 +62,9 @@ lint_syn:
 	@for top in $(SYN_TOPS); do \
 		verilator -Wall -y rtl --lint-only --top-module $$top syn/$$top.sv || exit 1; \
 	done
+
+synth:
+	$(VIVADO) -mode batch -nojournal -nolog -source syn/synth.tcl -tclargs $(SYNTH_TOP) $(SYNTH_PART) $(SYNTH_WIDTH) $(SYNTH_DEPTH) $(SYNTH_PORTS) $(SYNTH_CLK_NS) $(SYNTH_OUT_DIR) $(USE_XPM)
 
 clean:
 	rm -rf obj_dir build
