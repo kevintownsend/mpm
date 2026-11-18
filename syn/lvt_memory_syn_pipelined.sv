@@ -38,7 +38,7 @@ module lvt_memory_syn_pipelined #(
 
     if (push_buffered) begin
       for (int i = 0; i < PORTS; i++) begin
-        lvt_q_unrolled[(i+1)*WIDTH-1 -:WIDTH] <= lvt_q[i];
+        lvt_q_unrolled[(i+1)*WIDTH-1-:WIDTH] <= lvt_q[i];
       end
     end else begin
       lvt_q_unrolled[PORTS*WIDTH-1:1] <= lvt_q_unrolled[PORTS*WIDTH-2:0];
@@ -71,4 +71,4 @@ module lvt_memory_syn_pipelined #(
     .q(lvt_q)
   );
 
-endmodule // lvt_memory_syn_pipelined
+endmodule  // lvt_memory_syn_pipelined

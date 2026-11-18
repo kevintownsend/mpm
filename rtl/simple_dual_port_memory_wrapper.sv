@@ -38,4 +38,4 @@ module simple_dual_port_memory_wrapper #(
     end
   end
 
-endmodule // simple_dual_port_memory_wrapper
+endmodule  // simple_dual_port_memory_wrapper

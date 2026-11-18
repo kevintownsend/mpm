@@ -85,4 +85,4 @@ module xor_bram_memory_pipelined #(
     end
   endgenerate
 
-endmodule // xor_bram_memory_pipelined
+endmodule  // xor_bram_memory_pipelined

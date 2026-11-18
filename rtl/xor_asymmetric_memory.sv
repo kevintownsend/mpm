@@ -64,7 +64,7 @@ module xor_asymmetric_memory #(
       col_addr[FULL_PORTS + w] = write_addr[w];
     end
     for (int r = 0; r < READ_PORTS; r++) begin
-      col_addr[NUM_ROWS + r] = read_addr[r];
+      col_addr[NUM_ROWS+r] = read_addr[r];
     end
   end
 
@@ -89,7 +89,7 @@ module xor_asymmetric_memory #(
     for (int r = 0; r < READ_PORTS; r++) begin
       read_q[r] = '0;
       for (int j = 0; j < NUM_ROWS; j++) begin
-        read_q[r] = read_q[r] ^ ram_output[j][NUM_ROWS + r];
+        read_q[r] = read_q[r] ^ ram_output[j][NUM_ROWS+r];
       end
     end
   end
@@ -132,4 +132,4 @@ module xor_asymmetric_memory #(
     end
   endgenerate
 
-endmodule // xor_asymmetric_memory
+endmodule  // xor_asymmetric_memory

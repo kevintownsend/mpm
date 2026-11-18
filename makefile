@@ -14,9 +14,22 @@ SYN_TOPS := \
 	xor_bram_memory_pipelined_syn \
 	xor_distributed_memory_syn
 
+YOSYS_TOPS := \
+	xor_memory \
+	xor_bram_memory_pipelined \
+	xor_distributed_memory \
+	xor_distributed_memory_pipelined \
+	lvt_memory \
+	lvt_memory_pipelined \
+	xor_asymmetric_memory
+
 RTL_SRCS := $(wildcard rtl/*.sv)
 PYTEST ?= $(if $(wildcard .venv/bin/pytest),.venv/bin/pytest,pytest)
 VIVADO ?= $(if $(wildcard /home/kevin/Xilinx/2025.1/Vivado/bin/vivado),/home/kevin/Xilinx/2025.1/Vivado/bin/vivado,vivado)
+VERIBLE_LINT ?= verible-verilog-lint
+VERIBLE_FMT ?= verible-verilog-format
+SV2V ?= sv2v
+YOSYS ?= yosys
 
 SYNTH_TOP ?= xor_bram_memory_pipelined
 SYNTH_PART ?= xcvu47p-fsvh2892-3-e
@@ -34,7 +47,7 @@ endif
 
 RUN_TARGETS := $(addprefix run_,$(TBS))
 
-.PHONY: sim lvt_sim lvt_pipelined_sim simple_dual_port_memory_wrapper_sim test lint_syn synth clean $(RUN_TARGETS)
+.PHONY: sim lvt_sim lvt_pipelined_sim simple_dual_port_memory_wrapper_sim test lint_syn lint_style synth_yosys synth clean $(RUN_TARGETS)
 
 sim: $(RUN_TARGETS)
 
@@ -61,6 +74,18 @@ test:
 lint_syn:
 	@for top in $(SYN_TOPS); do \
 		verilator -Wall -y rtl --lint-only --top-module $$top syn/$$top.sv || exit 1; \
+	done
+
+lint_style:
+	$(VERIBLE_LINT) --rules_config=.rules.verible_lint rtl/*.sv syn/*.sv
+	$(VERIBLE_FMT) --flagfile=.verible_format --verify --inplace rtl/*.sv syn/*.sv
+
+synth_yosys:
+	mkdir -p build
+	$(SV2V) $$(cat rtl/mpm.f) > build/mpm_v2k.v
+	@for top in $(YOSYS_TOPS); do \
+		echo "=== Yosys synth_xilinx: $$top ==="; \
+		$(YOSYS) -q -p "read_verilog build/mpm_v2k.v; hierarchy -check -top $$top; proc; synth_xilinx -top $$top; select -assert-none t:\$$dlatch*" || exit 1; \
 	done
 
 synth:

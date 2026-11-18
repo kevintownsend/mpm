@@ -54,4 +54,4 @@ module xor_distributed_memory #(
     end
   endgenerate
 
-endmodule // xor_distributed_memory
+endmodule  // xor_distributed_memory

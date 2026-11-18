@@ -16,7 +16,7 @@ This repository accompanies the ACM/SIGDA FPGA '26 paper:
 
 ![Generalized bidirectional multi-port XOR memory architecture with 2 full ports, 2 write-only ports, and 2 read-only ports](doc/xor_architecture.png)
 
-*Generalized XOR memory architecture (`2` full, `2` write-only, and `2` read-only ports using `22` RAMs). The SystemVerilog modules in this repository implement the symmetric bidirectional configuration (`FULL PORTS = PORTS`, using `PORTS²` RAMs for XOR and `PORTS*(PORTS-1)/2` data BRAMs for LVT).*
+*Generalized XOR memory architecture (`2` full, `2` write-only, and `2` read-only ports using `22` RAMs). The repository provides symmetric bidirectional modules (`FULL PORTS = PORTS`, using `PORTS²` RAMs for XOR and `PORTS*(PORTS-1)/2` data BRAMs for LVT) alongside the generalized asymmetric [`xor_asymmetric_memory`](rtl/xor_asymmetric_memory.sv) module supporting arbitrary `(FULL_PORTS, WRITE_PORTS, READ_PORTS)` configurations.*
 
 - **Vivado Synthesis Summary** (`WIDTH = 32`, `DEPTH = 1024`, targeting an AMD Virtex UltraScale+ HBM VU47P-3; 16- and 32-port designs wrapped with serialized I/O in [`syn/`](syn/)):
 
@@ -57,7 +57,7 @@ All top-level modules are parameterized by `WIDTH`, `DEPTH`, and `PORTS` (`PORTS
 - [`rtl/simple_dual_port_memory_xilinx.sv`](rtl/simple_dual_port_memory_xilinx.sv): Xilinx `xpm_memory_sdpram` wrapper selected via `USE_XPM=1` on BRAM XOR modules for Vivado flows.
 - [`rtl/simple_distributed_ram.sv`](rtl/simple_distributed_ram.sv): Synchronous write / combinational read distributed RAM primitive.
 - [`rtl/dual_port_memory.sv`](rtl/dual_port_memory.sv): True dual-port RAM primitive for LVT data banks.
-- [`syn/`](syn/): Serialized shift-register I/O wrappers and Vivado project files (`syn/syn.xpr`) for out-of-context synthesis benchmarking.
+- [`syn/`](syn/): Scripted non-project Vivado flow ([`syn/synth.tcl`](syn/synth.tcl)), serialized shift-register I/O wrappers (`*_syn.sv`), legacy Vivado project ([`syn/syn.xpr`](syn/syn.xpr)), and synthesis documentation ([`syn/README.md`](syn/README.md)).
 
 ## Simulation & Linting
 
@@ -67,7 +67,7 @@ Install Verilator:
 sudo apt install verilator
 ```
 
-Run all testbenches in parallel (compiled with `verilator -Wall --binary`):
+Run all SystemVerilog testbenches in parallel (compiled with `verilator -Wall --binary`):
 
 ```sh
 make -j sim
@@ -79,22 +79,60 @@ To emit compressed FST waveforms under `build/` for debugging:
 make -j TRACE=1 sim
 ```
 
-Run the parameterized `cocotb` + `pytest` randomized verification matrix (all 6 symmetric modules across `PORTS = 2, 3, 4, 5, 8`):
+Run the parameterized `cocotb` + `pytest` randomized verification matrix across all 6 symmetric modules and `PORTS = 2, 3, 4, 5, 8` (requires `cocotb` and `pytest` in `.venv/` or on `PATH`):
 
 ```sh
 make test
 ```
 
-Lint all synthesis wrappers in `syn/`:
+Lint all synthesis wrappers in `syn/` with Verilator:
 
 ```sh
 make lint_syn
 ```
 
-Individual targets are also available (`make lvt_sim`, `make lvt_pipelined_sim`, `make simple_dual_port_memory_wrapper_sim`), and build artifacts can be removed with:
+Run Verible style lint and formatting verification (`.rules.verible_lint` and `.verible_format`):
+
+```sh
+make lint_style
+```
+
+Individual SystemVerilog targets are also available (`make lvt_sim`, `make lvt_pipelined_sim`, `make simple_dual_port_memory_wrapper_sim`), and build artifacts can be removed with:
 
 ```sh
 make clean
+```
+
+## Synthesis & IP Packaging
+
+### Open-Source Synthesis (`sv2v` + `yosys`)
+
+Convert SystemVerilog sources in [`rtl/mpm.f`](rtl/mpm.f) to Verilog-2001 with `sv2v` and run Yosys `synth_xilinx` with latch checks across all 7 top-level RTL modules:
+
+```sh
+make synth_yosys
+```
+
+### Scripted Vivado Non-Project Synthesis
+
+Run reproducible out-of-context (OOC) Vivado synthesis via [`syn/synth.tcl`](syn/synth.tcl) without relying on the GUI project:
+
+```sh
+make synth SYNTH_TOP=xor_bram_memory_pipelined SYNTH_PORTS=8 SYNTH_WIDTH=32 SYNTH_DEPTH=1024 USE_XPM=0
+make synth SYNTH_TOP=xor_bram_memory_pipelined SYNTH_PORTS=8 SYNTH_WIDTH=32 SYNTH_DEPTH=1024 USE_XPM=1
+```
+
+By default, [`syn/synth.tcl`](syn/synth.tcl) targets `xcvu47p-fsvh2892-3-e` (matching the paper's VU47P-3 benchmarks) and automatically falls back to `xc7a200tiffg1156-1L` if UltraScale+ parts are not installed locally. See [`syn/README.md`](syn/README.md) for all CLI arguments, wrapper details, and output reports (`utilization.rpt`, `timing_summary.rpt`, `summary.txt`).
+
+### FuseSoC IP Core ([`mpm.core`](mpm.core))
+
+Register the local library and run Verilator lint, simulation, or Vivado/Yosys synthesis via FuseSoC:
+
+```sh
+fusesoc library add mpm .
+fusesoc run --target=lint mpm
+fusesoc run --target=sim mpm
+fusesoc run --target=synth mpm
 ```
 
 ## Contributing

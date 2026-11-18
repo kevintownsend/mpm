@@ -28,4 +28,4 @@ module simple_distributed_ram #(
     q = ram[addr_q];
   end
 
-endmodule // simple_distributed_ram
+endmodule  // simple_distributed_ram

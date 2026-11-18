@@ -28,4 +28,4 @@ module simple_dual_port_memory #(
     q <= ram[addr_q];
   end
 
-endmodule // simple_dual_port_memory
+endmodule  // simple_dual_port_memory

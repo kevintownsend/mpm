@@ -80,4 +80,4 @@ module xor_memory #(
     end
   endgenerate
 
-endmodule // xor_memory
+endmodule  // xor_memory

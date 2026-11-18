@@ -35,4 +35,4 @@ module dual_port_memory #(
     q_b <= ram[addr_b];
   end
 
-endmodule // dual_port_memory
+endmodule  // dual_port_memory

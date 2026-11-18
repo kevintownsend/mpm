@@ -28,7 +28,7 @@ module xor_distributed_memory_syn #(
 
     if (push) begin
       for (int i = 0; i < PORTS; i++) begin
-        xor_q_unrolled[(i+1)*WIDTH-1 -:WIDTH] <= xor_q[i];
+        xor_q_unrolled[(i+1)*WIDTH-1-:WIDTH] <= xor_q[i];
       end
     end else begin
       xor_q_unrolled[PORTS*WIDTH-1:1] <= xor_q_unrolled[PORTS*WIDTH-2:0];
@@ -56,4 +56,4 @@ module xor_distributed_memory_syn #(
     .q(xor_q)
   );
 
-endmodule // xor_distributed_memory_syn
+endmodule  // xor_distributed_memory_syn

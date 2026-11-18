@@ -84,4 +84,4 @@ module lvt_memory_pipelined #(
     end
   end
 
-endmodule // lvt_memory_pipelined
+endmodule  // lvt_memory_pipelined

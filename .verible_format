@@ -1,0 +1,6 @@
+--indentation_spaces=2
+--wrap_spaces=2
+--port_declarations_alignment=preserve
+--module_net_variable_alignment=preserve
+--named_parameter_alignment=preserve
+--assignment_statement_alignment=preserve

@@ -79,4 +79,4 @@ module xor_distributed_memory_pipelined #(
     end
   endgenerate
 
-endmodule // xor_distributed_memory_pipelined
+endmodule  // xor_distributed_memory_pipelined

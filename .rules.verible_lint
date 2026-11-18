@@ -1,0 +1,5 @@
+-explicit-parameter-storage-type
+-unpacked-dimensions-range-ordering
+-generate-label-prefix
+parameter-name-style=localparam_style:ALL_CAPS
+line-length=length:150
